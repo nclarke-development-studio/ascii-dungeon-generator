@@ -1,59 +1,53 @@
-/*
-    Want perlin noise 1D and 2D, will probably do 3D out of pure masochism
-    look at:
-    https://en.wikipedia.org/wiki/Perlin_noise
-    https://solarianprogrammer.com/2012/07/18/perlin-noise-cpp-11/
-    the wood texture part of this is interesting
-    https://www.youtube.com/watch?v=wbpMiKiSKm8
-
-    Usage
-
-    I want to either generate a 1D or 2D float array based either randomly
-    or using a seed provided dimensions to work with
-*/
 #pragma once
 
+#include <ctime>
 #include <vector>
-#include <stdlib.h>     /* srand, rand */
-#include <numeric>      /* std::iota   */
-#include <algorithm>    /* std::shuffle */
-#include <time.h>       /* time */
+#include <random>
 
-#include "vec.h"
-
-class PerlinNoise {
-	// The permutation vector (not sure what this is)
-	std::vector<int> p;
+class PerlinNoise
+{
 public:
-	// Initialize with the reference values for the permutation vector
-	PerlinNoise() {};
-	// Generate a new permutation vector based on the value of seed
-	PerlinNoise(unsigned int seed);
-    //as input this should take a seed and array size return an array
-    float* noise1D(int size, float* seedArray, int nOctaves, int pBias=2);
-    float* noise2D(int width, int height, float* seedArray, int nOctaves, int pBias=2);
-	// Get a noise value, for 2D images z can have any value
-	double noise3D(double x, double y, double z);
+	explicit PerlinNoise(unsigned int seed = 0);
+
+	// Single-octave Perlin
+	double noise(double x, double y, double z = 0.0) const;
+
+	// Fractal Brownian Motion (octaves)
+	// layer multiple noises on top of each other at different scales
+	/*
+		neutral: 6, 2.0, 0.5
+		jagged: 6, 2.3, 0.55
+	
+	*/
+	double fbm(
+		double x,
+		double y,
+		int octaves, // number of noise layers added
+		double lacunarity = 2.0, // frequency increases per octave
+		double gain = 0.5) const; // strength of each layer
 
 private:
-	double fade(double t);
-	double grad(int hash, double x, double y, double z);
+	std::vector<int> p;
+
+	static double fade(double t);
+	static double lerp(double a, double b, double t);
+	static double grad(int hash, double x, double y, double z);
 };
 
-//https://www.geeksforgeeks.org/inline-functions-cpp/
-inline float* RandomArray(int size, int seed)
+// https://www.geeksforgeeks.org/inline-functions-cpp/
+inline float *RandomArray(int size, int seed)
 {
-    float* seedArray = new float[size];
+	float *seedArray = new float[size];
 
-    if( seed < 0 )
-        srand(time(NULL));
-    else
-        srand(seed);
+	if (seed < 0)
+		srand(time(NULL));
+	else
+		srand(seed);
 
-    for (int i = 0; i < size; i++)
-    {
-        seedArray[i] = (float) rand() / (float)RAND_MAX;
-    }
+	for (int i = 0; i < size; i++)
+	{
+		seedArray[i] = (float)rand() / (float)RAND_MAX;
+	}
 
-    return seedArray;
+	return seedArray;
 }

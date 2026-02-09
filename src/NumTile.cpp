@@ -87,33 +87,61 @@ int GetAvgAreaValue(Grid<int> *grid, int sx, int sy, int radius)
 
 void PerlinFillMap(Grid<int> *grid, int seed)
 {
-	PerlinNoise p;
-	float *tmp = RandomArray(grid->GetHeight() * grid->GetWidth(), seed);
+	// PerlinNoise perlin(1337);
+	// float *tmp = RandomArray(grid->GetHeight() * grid->GetWidth(), seed);
 
-	// this gives us values from 0 to 1 but our map will be looking at 0-9 so let's
-	// process it a bit..
-	float *pMap = p.noise2D(grid->GetWidth(), grid->GetHeight(),
-							tmp, 4);
+	// // this gives us values from 0 to 1 but our map will be looking at 0-9 so let's
+	// // process it a bit..
+	// float *pMap = p.noise2D(grid->GetWidth(), grid->GetHeight(),
+	// 						tmp, 4);
 
-	for (int i = 0; i < grid->GetHeight() * grid->GetWidth(); i++)
-	{
-		pMap[i] *= 10;
-		if (pMap[i] > 10)
-		{
-			pMap[i] = 9;
-		}
+	// for (int i = 0; i < grid->GetHeight() * grid->GetWidth(); i++)
+	// {
+	// 	pMap[i] *= 10;
+	// 	if (pMap[i] > 10)
+	// 	{
+	// 		pMap[i] = 9;
+	// 	}
 
-		// may need to invert these..
-		int x = i / grid->GetWidth();
-		int y = i % grid->GetWidth();
+	// 	// may need to invert these..
+	// 	int x = i / grid->GetWidth();
+	// 	int y = i % grid->GetWidth();
 
-		grid->_map[x][y]->data = numtiles[(int)pMap[i]].data;
-	}
+	// 	grid->_map[x][y]->data = numtiles[(int)pMap[i]].data;
+	// }
 
 	// grid->ImportFloor(pMap, grid->GetWidth(), grid->GetHeight());
 
-	delete tmp;
-	delete pMap;
+	PerlinNoise perlin(1337);
+
+	int width = grid->GetWidth();
+	int height = grid->GetHeight();
+
+	// int heightmap[width & height];
+
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			double nx = (double)x / width;
+			double ny = (double)y / height;
+
+			double h = perlin.fbm(
+				nx * 8.0,
+				ny * 8.0,
+				6,	 // octaves
+				2.0, // lacunarity
+				0.5	 // gain
+			);
+
+			// heightmap[y * width + x] = h;
+
+				grid->_map[x][y]->data = numtiles[(int)h].data;
+		}
+	}
+
+	// delete tmp;
+	// delete pMap;
 }
 
 // TODO: 0s and 1s flip

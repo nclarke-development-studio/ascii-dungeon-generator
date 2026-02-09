@@ -20,8 +20,13 @@ $RECYCLE.BIN/
 .vscode/
 build/
 *.o
-src/*.a
+*.a
+*.lib
+*.dll
 *.exe
+*.so
+*.dylib
+
 
 # =========================
 # Operating System Files
@@ -64,3 +69,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# Ninja build files
+build.ninja
+*.ninja_deps
+*.ninja_log
