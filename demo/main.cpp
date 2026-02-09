@@ -15,11 +15,11 @@
 #include <ctime>
 #include <fstream>
 
-#include "Floor.h"
-#include "MapSystem.h"
-#include "PseudoPhysics.h"
-#include "NumTile.h"
-#include "argParser.h"
+#include "map/Floor.h"
+#include "map/MapSystem.h"
+#include "map/NumTile.h"
+#include "physics/PseudoPhysics.h"
+#include "utils/argParser.h"
 
 using std::cin;
 using std::cout;

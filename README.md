@@ -1,47 +1,80 @@
-# Simple Procedural room-based Dungeon and organic Map Generator
+# Procedural Dungeon & Organic Map Generator
 
-Based on [this blog post](https://www.gamasutra.com/blogs/AAdonaac/20150903/252889/Procedural_Dungeon_Generation_Algorithm.php), [this reddit post](https://www.reddit.com/r/gamedev/comments/1dlwc4/procedural_dungeon_generation_algorithm_explained/) and [this youtube series](https://www.youtube.com/watch?v=eJEpeUH1EMg)
+A simple **procedural, room-based dungeon generator** with support for **organic (cellular-style) maps**.  
+Includes region connection via graph algorithms and a demo application.
 
-I highly recommend you take a look at those!
+Inspired by and based on:
+- [Procedural Dungeon Generation Algorithm (Gamasutra)](https://www.gamasutra.com/blogs/AAdonaac/20150903/252889/Procedural_Dungeon_Generation_Algorithm.php)
+- [Reddit explanation](https://www.reddit.com/r/gamedev/comments/1dlwc4/procedural_dungeon_generation_algorithm_explained/)
+- [YouTube series](https://www.youtube.com/watch?v=eJEpeUH1EMg)
 
----------------------
+---
 
-## To-do
-* Package as library
-* Finish debugging
-* Do something with the .cc files
-* Perlin noise instead of pure random for organic map
+## Features
+
+- Room-based dungeon generation  
+- Organic / cellular-automata map generation  
+- Region connectivity using graph algorithms (MST)  
+- Configurable generation parameters  
+- Demo executable included  
+
+---
+
+## To-Do
+
+- Package as a reusable library
+
+---
+
+## Project Structure
+
+```
+.
+├── CMakeLists.txt
+├── data
+├── demo
+│   ├── CMakeLists.txt
+│   ├── DungeonGeneratorDemo.exe
+│   ├── main.cpp
+│   └── samples
+├── include
+│   ├── core
+│   ├── map
+│   ├── physics
+│   └── utils
+├── lib
+│   └── libAsciiMapGenerator.a
+├── README.md
+└── src
+```
+
+---
 
 ## Compilation
 
-Example compilation using MSYS2 MinGW-w64 (note that you need to use the mingw built cmake for the below to work!)
-```
-cmake . -G "MSYS Makefiles" -D build_demo=TRUE
+### Using CMake (MSYS2 MinGW-w64)
+
+```bash
+cmake . -G "MSYS Makefiles" -Dbuild_demo=TRUE
 make
 ```
 
-or enter ./src
+---
 
-```
-g++ -c -fPIC grid.cpp -o grid.o -I../include -std=c++11
-ar rcs libGrid.a Grid.o
-g++ -c -fPIC MapGenerator.cpp perlin_noise.cpp -o MapGenerator.o
-g++ -fPIC MapGenerator.cpp perlin_noise.cpp Region.cpp MapSystem.cpp RoomSystem cpp NumTile.cpp -I../include -o generators.o -std=c++11
-ar rcs libMapGenerator.a MapGenerator.o
-```
-
-enter ./demo
-
-`g++ main.cpp MapGenerator.cpp -I include -o main.exe -std=c++11 -L../lib -lMapGenerator`
 ## Usage
 
-`main.exe --help`
+```bash
+main.exe --help
+```
 
-### Flags
-* -d or --dimensions [width] [height] : size of map (mandatory)
-* -f or --fillpercentage [int] : fill percentage: what percentage to fill the floor up to
-* -n or --organic : organic mode. Omit this and the map will be filled room-styled
-* -c or --connect : connect. Add this flag to fully connect the map
-* -nr or --norandom : Non random seed
-* -s or --smoothing [int] : how many smoothing steps to use
-* -dn or --dense : Dense version of non-organic map
+### Command-line Flags
+
+| Flag | Description |
+|-----|-------------|
+| `-d`, `--dimensions <w> <h>` | **Required**. Map size |
+| `-f`, `--fillpercentage <int>` | Floor fill percentage |
+| `-n`, `--organic` | Organic generation mode |
+| `-c`, `--connect` | Fully connect regions |
+| `-nr`, `--norandom` | Disable random seed |
+| `-s`, `--smoothing <int>` | Smoothing iterations |
+| `-dn`, `--dense` | Dense non-organic map |
